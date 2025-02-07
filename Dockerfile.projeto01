@@ -1,0 +1,22 @@
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+
+COPY *.sln ./
+COPY src/Application/*.csproj src/Application/
+COPY src/Domain/*.csproj src/Domain/
+COPY src/Infrastructure/*.csproj src/Infrastructure/
+COPY src/gerenciador/*.csproj src/gerenciador/
+COPY tests/UnitTests/UnitTests.csproj tests/UnitTests/UnitTests.csproj
+RUN dotnet restore
+
+COPY src/ ./src/
+COPY tests/ ./tests/
+RUN dotnet publish Projeto01.sln -c Release -o /out
+
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS runtime
+WORKDIR /app
+COPY --from=build /out .
+
+EXPOSE 80
+
+ENTRYPOINT ["dotnet" "Projeto01.dll"]

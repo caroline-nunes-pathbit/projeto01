@@ -1,31 +1,59 @@
+using Microsoft.EntityFrameworkCore;
+using Infrastructure.Persistence;
+
+//Implementação dos métodos do IGenericRepository
 namespace Infrastructure.Repositories
 {
-    public class GenericRepository<T> : IGenericRepository<T> where T : class
+    public class GenericRepository<T> : Domain.Interfaces.IGenericRepository<T> where T : class
+ //Implementação do repositório genérico
     {
-        private readonly AppDbContext _context;
-        private readonly Dbset<T> _dbSet;
-        public GenericRepository(AppDbContext context)
+        public readonly AppDbContext _context; //Referência a classe AppDbContext
+
+        public GenericRepository(AppDbContext context) //Construtor
         {
             _context = context;
-            _dbset = context.Set<T>();
         }
 
-        public async Task<T> GetByIdAsync(Guid id) => await _dbSet.FindAsync(id);
-        public async Task<IEnumerable<T>> GetAllAsync() => await _dbSet.ToListAsync();
+        //Listar registros
+        public async Task<IEnumerable<T>> GetAllAsync()
+        {
+            return await _context.Set<T>().ToListAsync();
+        }
+
+        //Listar por id
+        public async Task<T> GetByIdAsync(Guid id)
+        {
+            var entity = await _context.Set<T>().FindAsync(id);
+            if(entity is null)
+            {
+                throw new KeyNotFoundException($"Id {id} não encontrado.");
+            }
+            return entity;
+        }
+
+        //Adicionar novo
         public async Task AddAsync(T entity) 
         {
-            await _dbSet.AddAsync(entity);
+            await _context.Set<T>().AddAsync(entity);
             await _context.SaveChangesAsync();
         }
+
+        //Atualizar
         public async Task UpdateAsync(T entity)
         {
-            await _dbSet.UpdateAsync(entity);
+            _context.Set<T>().Update(entity);
             await _context.SaveChangesAsync();
         } 
-        public async Task DeleteAsync(T entity)
+        
+        //Excluir
+        public async Task DeleteAsync(Guid id)
         {
-            await _dbSet.DeleteAsync(entity);
-            await _context.SaveChangesAsync();
+            var entity = await GetByIdAsync(id);
+            if(entity is not null)
+            {
+                _context.Set<T>().Remove(entity);
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }

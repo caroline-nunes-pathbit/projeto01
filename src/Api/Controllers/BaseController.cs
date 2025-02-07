@@ -1,3 +1,4 @@
+//Código genérico para controlar o CRUD das entidades (Resultados Ok ou Não encontrado)
 namespace Api.Controllers
 {
     [Route("api/[controller]")]
@@ -12,7 +13,7 @@ namespace Api.Controllers
             _repository = repository;
         }
 
-        //Lista de todos os dados inseridos
+        //Resultado da lista das entidades
         [HttpGet]
         public async Task<ActionResult<IEnumerable<T>>> GetAll()
         {
@@ -20,7 +21,7 @@ namespace Api.Controllers
             return Ok(entities);
         }
 
-        //Lista de dados recuperados por Id
+        //Resultado da lista de dados recuperados por Id
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
@@ -30,11 +31,11 @@ namespace Api.Controllers
                 return Ok(entity);
             } else 
             {
-                return NotFound();
+                return NotFound($"Id {id} não encontrado");
             }
         }
 
-        //Inserir um dado
+        //Resultado da inserção de um dado
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] T entity)
         {
@@ -43,7 +44,7 @@ namespace Api.Controllers
 
         }
 
-        //Atualizar um dado
+        //Resultado da atualização de um dado
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id [FromBody] T entity)
         {
@@ -53,10 +54,10 @@ namespace Api.Controllers
                 return NoContent();
             } else 
             {
-                return BadRequest();
+                return BadRequest($"Id {id} inválido");
             }
         }
-        //Deletar um dado
+        //Resultado ao deletar um dado
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
@@ -67,7 +68,7 @@ namespace Api.Controllers
                 return NoContent();
             } else 
             {
-                return NotFound();
+                return NotFound($"Id {id} não encontrado");
             }
         }
     }

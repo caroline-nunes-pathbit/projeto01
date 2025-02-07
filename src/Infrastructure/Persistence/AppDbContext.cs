@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using Domain.Models;
+using Domain.Entities;
 
-namespace Infrastructure.Persistence
-{
+namespace Infrastructure.Persistence;
+
     public class AppDbContext : DbContext
     {
         //Definir tabelas
@@ -12,12 +12,23 @@ namespace Infrastructure.Persistence
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Order> Orders { get; set; }
+        public DbSet<ProductOrder> ProductOrders { get; set; }
 
         //Configurações de mapeamento
-        // protected override void ONConfiguring(ModelBuilder modelBuilder)
-        // {
-        //     base.OnModelCreating(modelBuilder);
-        //     modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
-        // }
+         protected override void OnModelCreating(ModelBuilder modelBuilder)
+         {
+            //Relacionamentos muitos para muitos
+            modelBuilder.Entity<ProductOrder>()
+                .HasKey(po => new { po.ProductId, po.OrderId});
+
+            modelBuilder.Entity<ProductOrder>()
+                .HasOne(po => po.Order)
+                .WithMany(o => o.ProductOrder)
+                .HasForeignKey(po => po.OrderId);
+            
+            modelBuilder.Entity<ProductOrder>()
+                .HasOne(po => po.Product)
+                .WithMany(p => p.ProductOrder)
+                .HasForeignKey(po => po.ProductId);
+        }
     }
-}

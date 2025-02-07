@@ -1,3 +1,4 @@
+using Domain.Interfaces;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -5,8 +6,8 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Configura o Entity Framework com PostgreSQL
- builder.Services.AddDbContext<AppDbContext>(options => {
-     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));});
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 // Adiciona serviços da API
 builder.Services.AddControllers();

@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  api:
+    build: 
+      context: .
+      dockerfile: Dockerfile.projeto01
+    ports:
+      - "5000:80"
+    depends_on:
+      - db
+    environment: 
+      ConnectionStrings__DefaultConnection: "Host=db;Port=5432;Database=projeto01;Username=carolineluiza;Password=carol@5432"
+    volumes:
+      - .:/app
+
+  db:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_DB: projeto01
+      POSTGRES_USER: carolineluiza
+      POSTGRES_PASSWORD: carol@5432
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes: 
+  postgres_data:
