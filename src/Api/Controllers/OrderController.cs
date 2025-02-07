@@ -4,16 +4,17 @@ namespace src.Api.Controllers
 
     public class OrderController : ControllerBase<Order>
     {
-        public OrderController(IGenericRepository<Order> order) : base (order) 
+        private readonly IOrderService _orderService;
+        public OrderController(IOrderService orderService)
         {
-            _orderRepository = orderRepository;
+            _orderService = orderService;
         }
 
         //Lista os pedidos
         [HttpGet]
         public async Task<IActionResult> GetAllOrders()
         {
-            var order = await _orderRepository.GetAllAsync();
+            var order = await _orderService.GetAllAsync();
             return Ok(order);
         }
 
@@ -21,7 +22,7 @@ namespace src.Api.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOrderById(Guid id)
         {
-            var order = await _orderRepository.GetByIdAsync(id);
+            var order = await _orderService.GetByIdAsync(id);
             if(order is null)
             {
                 return NotFound("Pedido não foi encontrado.");
@@ -40,7 +41,7 @@ namespace src.Api.Controllers
                 return BadRequest("Dados inválidos.");
             } else
             {
-                await _orderRepository.AddAsync(order);
+                await _orderService.AddAsync(order);
                 return CreatedAction(nameof(GetOrderById), new {id = order.OrderId}, order);
             }
         }
@@ -54,7 +55,7 @@ namespace src.Api.Controllers
                 return BadRequest("Dados inválidos.");
             } else
             {
-                await _orderRepository.UpdateAsync(order);
+                await _orderService.UpdateAsync(order);
                 return NoContent();
             }
         }
@@ -63,13 +64,13 @@ namespace src.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteOrder(Guid id)
         {
-            var order = await _orderRepository.GetByIdAsync(id);
+            var order = await _orderService.GetByIdAsync(id);
             if(order is null)
             {
                 return NotFound();
             } else 
             {
-                await _orderRepository.DeleteAsync(oredr);
+                await _orderService.DeleteAsync(oredr);
                 return NoContent();
             }
         }

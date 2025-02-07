@@ -2,12 +2,8 @@ using Domain.Entities;
 
 namespace Domain.Interfaces.Services
 {
-    public interface IOrderService
+    public interface IOrderService : IGenericService<Order>
     {
-        Task<Order> GetByIsAsync(Guid id);
-        Task<IEnumerable<Order>> GetAllAsync();
-        Task AddAsync(Order order);
-        Task UpdateAsync(Order order);
-        Task DeleteAsync(Guid id);
+        Task<IEnumerable<Order>> GetByCustomerIdAsync(Guid id);
     }
 }

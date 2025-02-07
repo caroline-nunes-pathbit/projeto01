@@ -4,16 +4,17 @@ namespace src.Api.Controllers
 
     public class ProductController : ControllerBase<Product>
     {
-        public ProductController(IGenericRepository<Product> product) : base (product) 
+        private readonly IProductService _productService;
+        public ProductController(IProductService _productService) 
         {
-            _productRepository = productRepository;
+            _productService = productService;
         }
 
         //Lista os produtos
         [HttpGet]
         public async Task<IActionResult> GetAllProducts()
         {
-            var product = await _productRepository.GetAllAsync();
+            var product = await _productService.GetAllAsync();
             return Ok(product);
         }
 
@@ -21,7 +22,7 @@ namespace src.Api.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProductById(Guid id)
         {
-            var product = await _productRepository.GetByIdAsync(id);
+            var product = await _productService.GetByIdAsync(id);
             if(product is null)
             {
                 return NotFound("Produto não foi encontrado.");
@@ -40,7 +41,7 @@ namespace src.Api.Controllers
                 return BadRequest("Dados inválidos.");
             } else
             {
-                await _productRepository.AddAsync(product);
+                await _productService.AddAsync(product);
                 return CreatedAction(nameof(GetProductById), new {id = product.ProductId}, product);
             }
         }
@@ -54,7 +55,7 @@ namespace src.Api.Controllers
                 return BadRequest("Dados inválidos.");
             } else
             {
-                await _productRepository.UpdateAsync(product);
+                await _productService.UpdateAsync(product);
                 return NoContent();
             }
         }
@@ -63,13 +64,13 @@ namespace src.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(Guid id)
         {
-            var product = await _productRepository.GetByIdAsync(id);
+            var product = await _productService.GetByIdAsync(id);
             if(product is null)
             {
                 return NotFound();
             } else 
             {
-                await _productRepository.DeleteAsync(product);
+                await _productService.DeleteAsync(product);
                 return NoContent();
             }
         }

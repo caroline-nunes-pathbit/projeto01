@@ -4,16 +4,17 @@ namespace src.Api.Controllers
 
     public class CustomerController : ControllerBase<Customer>
     {
-        public CustomerController(IGenericRepository<Customer> customer) : base (customer) 
+        private readonly ICustomerService _customerService;
+        public CustomerController(ICustomerService customerService)
         {
-            _customerRepository = customerRepository;
+            _customerService = customerService;
         }
 
         //Lista os clientes
         [HttpGet]
         public async Task<IActionResult> GetAllCustomers()
         {
-            var customer = await _customerRepository.GetAllAsync();
+            var customer = await _customerService.GetAllAsync();
             return Ok(customer);
         }
 
@@ -21,7 +22,7 @@ namespace src.Api.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetCustomerById(Guid id)
         {
-            var customer = await _customerRepository.GetByIdAsync(id);
+            var customer = await _customerService.GetByIdAsync(id);
             if(customer is null)
             {
                 return NotFound("Cliente não foi encontrado.");
@@ -40,7 +41,7 @@ namespace src.Api.Controllers
                 return BadRequest("Dados inválidos.");
             } else
             {
-                await _customerRepository.AddAsync(customer);
+                await _customerService.AddAsync(customer);
                 return CreatedAction(nameof(GetCustomerById), new {id = customer.CustomerId}, customer);
             }
         }
@@ -54,7 +55,7 @@ namespace src.Api.Controllers
                 return BadRequest("Dados inválidos.");
             } else
             {
-                await _customerRepository.UpdateAsync(customer);
+                await _customerService.UpdateAsync(customer);
                 return NoContent();
             }
         }
@@ -63,13 +64,13 @@ namespace src.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCustomer(Guid id)
         {
-            var customer = await _customerRepository.GetByIdAsync(id);
+            var customer = await _customerService.GetByIdAsync(id);
             if(customer is null)
             {
                 return NotFound();
             } else 
             {
-                await _customerRepository.DeleteAsync(customer);
+                await _customerService.DeleteAsync(customer);
                 return NoContent();
             }
         }

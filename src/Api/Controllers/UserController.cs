@@ -4,16 +4,17 @@ namespace Api.Controllers{
 
     public class UserController : ControllerBase<User>
     {
-        public UserController(IGenericRepository<User> user) : base (user) 
+        private readonly IUserService _userService;
+        public UserController(IUserService _userService) 
         {
-            _userRepository = userRepository;
+            _userService = userService;
         }
 
         //Lista os usuários
         [HttpGet]
         public async Task<IActionResult> GetAllUsers()
         {
-            var user = await _userRepository.GetAllAsync();
+            var user = await _userService.GetAllAsync();
             return Ok(user);
         }
 
@@ -21,7 +22,7 @@ namespace Api.Controllers{
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUserById(Guid id)
         {
-            var user = await _userRepository.GetByIdAsync(id);
+            var user = await _userService.GetByIdAsync(id);
             if(user is null)
             {
                 return NotFound("Cliente não foi encontrado.");
@@ -40,7 +41,7 @@ namespace Api.Controllers{
                 return BadRequest("Dados inválidos.");
             } else
             {
-                await _userRepository.AddAsync(user);
+                await _userService.AddAsync(user);
                 return CreatedAction(nameof(GetUserById), new {id = user.UserId}, user);
             }
         }
@@ -54,7 +55,7 @@ namespace Api.Controllers{
                 return BadRequest("Dados inválidos.");
             } else
             {
-                await _userRepository.UpdateAsync(user);
+                await _userService.UpdateAsync(user);
                 return NoContent();
             }
         }
@@ -63,13 +64,13 @@ namespace Api.Controllers{
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(Guid id)
         {
-            var user = await _userRepository.GetByIdAsync(id);
+            var user = await _userService.GetByIdAsync(id);
             if(user is null)
             {
                 return NotFound();
             } else 
             {
-                await _userRepository.DeleteAsync(user);
+                await _userService.DeleteAsync(user);
                 return NoContent();
             }
         }
