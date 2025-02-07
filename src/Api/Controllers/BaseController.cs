@@ -46,7 +46,7 @@ namespace Api.Controllers
 
         //Resultado da atualização de um dado
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id [FromBody] T entity)
+        public async Task<IActionResult> Update(Guid id, [FromBody] T entity)
         {
             if(entity is not null || entity.GetType().GetProperty("Id").GetValue(entity).ToString == id.ToString())
             {
