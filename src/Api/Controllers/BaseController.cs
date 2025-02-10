@@ -1,4 +1,3 @@
-//Código genérico para controlar o CRUD das entidades (Resultados Ok ou Não encontrado)
 namespace Api.Controllers
 {
     [Route("api/[controller]")]
@@ -6,26 +5,26 @@ namespace Api.Controllers
 
     public class BaseController<T> ControllerBase where T : class
     {
-        private readonly IGenericRepository<T> _repository;
+        private readonly IGenericService<T> _service;
 
-        public BaseController(IGenericRepository repository)
+        public BaseController(IGenericService service)
         {
-            _repository = repository;
+            _service = service;
         }
 
         //Resultado da lista das entidades
         [HttpGet]
         public async Task<ActionResult<IEnumerable<T>>> GetAll()
         {
-            var entites = await _repository.GetAllAsync();
-            return Ok(entities);
+            var entity = await _service.GetAllAsync();
+            return Ok(entity);
         }
 
         //Resultado da lista de dados recuperados por Id
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
-            var entity = await _repository.GetByIdAsync(id);
+            var entity = await _service.GetByIdAsync(id);
             if(entity is not null)
             {
                 return Ok(entity);
@@ -39,7 +38,7 @@ namespace Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] T entity)
         {
-            await _repository.AddAsync(entity);
+            await _service.AddAsync(entity);
             return CreatedAtAction(nameof(GetById), new {id = entity.GetType().GetProperty("Id")?.GetValue(entity)}, entity);
 
         }
@@ -50,7 +49,7 @@ namespace Api.Controllers
         {
             if(entity is not null || entity.GetType().GetProperty("Id").GetValue(entity).ToString == id.ToString())
             {
-                await _repository.UpdateAsync(entity);
+                await _service.UpdateAsync(entity);
                 return NoContent();
             } else 
             {
@@ -61,10 +60,10 @@ namespace Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var entity = await _repository.GetByIdAsync(id);
+            var entity = await _service.GetByIdAsync(id);
             if(entity is not null)
             {
-                return _repository.DeleteAsync(entity);
+                return _service.DeleteAsync(entity);
                 return NoContent();
             } else 
             {

@@ -1,11 +1,11 @@
 namespace Api.Controllers{
 
-    [Routes("api/user")]
+    [Route("api/user")]
 
     public class UserController : ControllerBase<User>
     {
         private readonly IUserService _userService;
-        public UserController(IUserService _userService) 
+        public UserController(IUserService userService) 
         {
             _userService = userService;
         }
@@ -25,7 +25,7 @@ namespace Api.Controllers{
             var user = await _userService.GetByIdAsync(id);
             if(user is null)
             {
-                return NotFound("Cliente não foi encontrado.");
+                return NotFound("Usuário não foi encontrado.");
             } else
             {
                 return Ok(user);
@@ -42,13 +42,13 @@ namespace Api.Controllers{
             } else
             {
                 await _userService.AddAsync(user);
-                return CreatedAction(nameof(GetUserById), new {id = user.UserId}, user);
+                return CreatedAtAction(nameof(GetUserById), new {id = user.UserId}, user);
             }
         }
 
         //Editar um usuário
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(Guid id, [FromBody] UserController user)
+        public async Task<IActionResult> UpdateUser(Guid id, [FromBody] User user)
         {
             if(id != user.UserId)
             {
@@ -72,6 +72,36 @@ namespace Api.Controllers{
             {
                 await _userService.DeleteAsync(user);
                 return NoContent();
+            }
+        }
+
+        //Cadastrar-se
+        [HttpPost("signup")]
+        public async Task<IActionResult> SignUp ([FromBody] SignUpRequest request)
+        {
+            try
+            {
+                await _userService.RegisterUserAsync(request);
+                return Ok("Usuário cadastrado com sucesso.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new {message = ex.Message});
+            }
+        }
+
+        //Fazer Login 
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody]LoginRequest loginRequest)
+        {
+            try
+            {
+                var token = await _userService.LoginAsync(loginRequest.Email, loginRequest.Password);
+                return Ok(token);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized("Usuário ou senha inválidos.");
             }
         }
     }
