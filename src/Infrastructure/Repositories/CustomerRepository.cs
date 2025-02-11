@@ -9,7 +9,7 @@ namespace Infrastructure.Repositories
     {
         //Construtor para receber o AppDbContext e passar pra base GenericRepository
         public CustomerRepository(AppDbContext context) : base(context) {}
-
+        //Método implementado para encontrar um cliente por nome
         public async Task<Customer> GetByCustomerNameAsync(string name){
             var customer = await _context.Customers.FirstOrDefaultAsync(c => c.CustomerName == name); 
             if(customer == null){

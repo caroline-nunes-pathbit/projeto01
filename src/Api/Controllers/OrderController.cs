@@ -34,16 +34,23 @@ namespace src.Api.Controllers
 
         //Criar um pedido
         [HttpPost]
-        public async Task<IActionResult> CreateOrder([FromBody] Order order)
+        public async Task<IActionResult> CreateOrder([FromBody] CreateOrderRequest createOrderRequest)
         {
-            if(order is null)
+            if(createOrderRequest is null)
             {
                 return BadRequest("Dados inválidos.");
-            } else
-            {
-                await _orderService.AddAsync(order);
-                return CreatedAction(nameof(GetOrderById), new {id = order.OrderId}, order);
             }
+
+            var order = await _orderService.CreateOrderAsync(
+                createOrderRequest.CustomerId,
+                createOrderRequest.ProductId,
+                createOrderRequest.Quantity,
+                createOrderRequest.Cep,
+                createOrderRequest.UserType
+            );
+
+            return CreatedAtAction(nameof(GetOrderById), new { id = order.Id }, order);
+
         }
 
         //Editar um pedido

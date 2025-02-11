@@ -21,10 +21,12 @@ namespace Application.Services
             _customerRepository = customerRepository;
             _configuration = configuration;
         }
+        //Implementação do método de achar usuário por nome
         public async Task<User> GetByUserNameAsync(string name)
         {
             return await _userRepository.GetByUserNameAsync(name);
         }
+        //Cadastrar
         public async Task<User> SignupAsync(string email, string username, string password, string name, UserType userType)
         {
             var existingUser = await _userRepository.GetByEmailAsync(email);
@@ -52,6 +54,7 @@ namespace Application.Services
             }
             return user;
         }
+        //Fazer Login
         public async Task<string> LoginAsync(string email, string password)
         {
             var user = await _userRepository.GetByEmailAsync(email);
@@ -67,6 +70,7 @@ namespace Application.Services
             var token = GenerateJwtToken(user);
             return token;
         }
+        // Hash Password que retorna Base64
         private string Password(string password)
         {
             using (SHA256 sha256 = SHA256.Create())
@@ -75,6 +79,7 @@ namespace Application.Services
                 return Convert.ToBase64String(hashBytes);
             }
         }
+        //Hash Password que retorna hexadecimal
         private string ComputeSha256Hash(string password)
         {
             using (SHA256 sha256Hash = SHA256.Create())
@@ -83,6 +88,7 @@ namespace Application.Services
                 return BitConverter.ToString(bytes).Replace("-","").ToLower();
             }
         }
+        //Gerar token JWT
         private string GenerateJwtToken(User user)
         {
             var jwtKey = _configuration["JwtSettings:Key"];

@@ -11,6 +11,7 @@ namespace Application.Services
         {
             _customerRepository = customerRepository;
         }
+        //Achar cliente por nome
         public async Task<Customer> GetByCustomerNameAsync(string name)
         {
             return await _customerRepository.GetByCustomerNameAsync(name);

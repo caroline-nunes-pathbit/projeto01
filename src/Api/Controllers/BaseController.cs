@@ -1,3 +1,4 @@
+//Controller genérico para as entidades
 namespace Api.Controllers
 {
     [Route("api/[controller]")]

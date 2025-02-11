@@ -33,16 +33,22 @@ namespace src.Api.Controllers
         }
 
         //Criar um produto
+        [Authorize(Roles = "Administrador")]
         [HttpPost]
-        public async Task<IActionResult> CreateProduct([FromBody] Product product)
+        public async Task<IActionResult> CreateProduct([FromBody] ProductDTO productDto)
         {
-            if(product is null)
+            if(productDto.Quantity <= 0)
             {
-                return BadRequest("Dados inválidos.");
+                return BadRequest("A quantidade do produto deve ser maior que zero.");
             } else
             {
+                var product = new Product(
+                    Name = productDto.ProductName,
+                    Price = productDto.Price,
+                    Quantity = productDto.Quantity
+                );
                 await _productService.AddAsync(product);
-                return CreatedAction(nameof(GetProductById), new {id = product.ProductId}, product);
+                return CreatedAtAction(nameof(GetProductById), new {id = product.Id}, product);
             }
         }
 

@@ -1,3 +1,4 @@
+//Interface que define a assinatura do método específico da entidade UserRepository
 using Domain.Entities;
 
 namespace Domain.Interfaces

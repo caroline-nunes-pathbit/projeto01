@@ -139,3 +139,12 @@ C:\Users\carol\Desktop\Projeto01\src\gerenciador\obj\Debug\net8.0\refint\gerenci
 C:\Users\carol\Desktop\Projeto01\src\gerenciador\obj\Debug\net8.0\gerenciador.pdb
 C:\Users\carol\Desktop\Projeto01\src\gerenciador\obj\Debug\net8.0\gerenciador.genruntimeconfig.cache
 C:\Users\carol\Desktop\Projeto01\src\gerenciador\obj\Debug\net8.0\ref\gerenciador.dll
+C:\Users\carol\Desktop\Projeto01\src\gerenciador\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\carol\Desktop\Projeto01\src\gerenciador\bin\Debug\net8.0\Microsoft.Bcl.Memory.dll
+C:\Users\carol\Desktop\Projeto01\src\gerenciador\bin\Debug\net8.0\Microsoft.IdentityModel.Abstractions.dll
+C:\Users\carol\Desktop\Projeto01\src\gerenciador\bin\Debug\net8.0\Microsoft.IdentityModel.JsonWebTokens.dll
+C:\Users\carol\Desktop\Projeto01\src\gerenciador\bin\Debug\net8.0\Microsoft.IdentityModel.Logging.dll
+C:\Users\carol\Desktop\Projeto01\src\gerenciador\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.dll
+C:\Users\carol\Desktop\Projeto01\src\gerenciador\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+C:\Users\carol\Desktop\Projeto01\src\gerenciador\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
+C:\Users\carol\Desktop\Projeto01\src\gerenciador\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll

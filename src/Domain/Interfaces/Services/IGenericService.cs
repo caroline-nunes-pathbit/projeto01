@@ -1,3 +1,4 @@
+//Interface para definir a assinatura dos métodos que o GenericService deve implementar
 namespace Domain.Interfaces.Services
 {
     public interface IGenericService<T> where T : class
