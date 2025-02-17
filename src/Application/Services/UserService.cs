@@ -7,6 +7,8 @@ using Microsoft.Extensions.Configuration;
 using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Interfaces.Services;
+using Common.DTOs;
+
 
 namespace Application.Services
 {
@@ -70,6 +72,34 @@ namespace Application.Services
             var token = GenerateJwtToken(user);
             return token;
         }
+
+        public async Task RegisterUserAsync(SignUpRequest request)
+        {
+            var existingUser = await _userRepository.GetByEmailAsync(request.Email);
+            if(existingUser is not null)
+            {
+                throw new Exception("Email já cadastrado.");
+            }
+            
+            var user = new User
+            {
+                UserEmail = request.Email,
+                UserName = request.Username,
+                Password = Password(request.Password),
+                UserType = "Cliente"
+            };
+            
+            await _userRepository.AddAsync(user);
+            
+            var customer = new Customer
+            {
+                CustomerEmail = request.Email,
+                CustomerName = request.Name
+            };
+            
+            await _customerRepository.AddAsync(customer);
+        }
+
         // Hash Password que retorna Base64
         private string Password(string password)
         {

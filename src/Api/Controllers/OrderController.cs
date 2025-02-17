@@ -1,11 +1,16 @@
-namespace src.Api.Controllers
-{
-    [Routes("api/order")]
+using Microsoft.AspNetCore.Mvc;
+using Domain.Entities;
+using Domain.Interfaces.Services;
+using Application.DTOs;
 
-    public class OrderController : ControllerBase<Order>
+namespace Api.Controllers
+{
+    [Route("api/order")]
+
+    public class OrderController : BaseController<Order>
     {
         private readonly IOrderService _orderService;
-        public OrderController(IOrderService orderService)
+        public OrderController(IOrderService orderService) : base(orderService)
         {
             _orderService = orderService;
         }
@@ -55,9 +60,9 @@ namespace src.Api.Controllers
 
         //Editar um pedido
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateOrder(Guid id, [FromBody] OrederController order)
+        public async Task<IActionResult> UpdateOrder(Guid id, [FromBody] Order order)
         {
-            if(id != order.OrderId)
+            if(id != order.Id)
             {
                 return BadRequest("Dados inválidos.");
             } else
@@ -77,7 +82,7 @@ namespace src.Api.Controllers
                 return NotFound();
             } else 
             {
-                await _orderService.DeleteAsync(oredr);
+                await _orderService.DeleteAsync(id);
                 return NoContent();
             }
         }

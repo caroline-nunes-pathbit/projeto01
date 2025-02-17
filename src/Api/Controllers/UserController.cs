@@ -1,11 +1,20 @@
-namespace Api.Controllers{
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Domain.Entities;
+using Domain.Interfaces.Services;
+using Application.DTOs;
+using Common.DTOs;
+
+namespace Api.Controllers
+{
 
     [Route("api/user")]
 
-    public class UserController : ControllerBase<User>
+    public class UserController : BaseController<User>
     {
         private readonly IUserService _userService;
-        public UserController(IUserService userService) 
+        public UserController(IUserService userService) : base(userService)
+
         {
             _userService = userService;
         }
@@ -25,7 +34,8 @@ namespace Api.Controllers{
             var user = await _userService.GetByIdAsync(id);
             if(user is null)
             {
-                return NotFound("Usuário não foi encontrado.");
+                return NotFound(new { message = "Usuário não foi encontrado." });
+
             } else
             {
                 return Ok(user);
@@ -41,8 +51,9 @@ namespace Api.Controllers{
                 return BadRequest("Dados inválidos.");
             } else
             {
-                await _userService.AddAsync(user);
-                return CreatedAtAction(nameof(GetUserById), new {id = user.UserId}, user);
+                await _userService.CreateAsync(user);
+                return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, user);
+
             }
         }
 
@@ -50,12 +61,19 @@ namespace Api.Controllers{
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser(Guid id, [FromBody] User user)
         {
-            if(id != user.UserId)
+            if(id != user.Id)
             {
                 return BadRequest("Dados inválidos.");
             } else
             {
+                var existingUser = await _userService.GetByIdAsync(id);
+                if (existingUser is null)
+                {
+                return NotFound(new { message = "Usuário não encontrado." });
+
+                }
                 await _userService.UpdateAsync(user);
+
                 return NoContent();
             }
         }
@@ -70,7 +88,7 @@ namespace Api.Controllers{
                 return NotFound();
             } else 
             {
-                await _userService.DeleteAsync(user);
+                await _userService.DeleteAsync(id);
                 return NoContent();
             }
         }
@@ -82,7 +100,8 @@ namespace Api.Controllers{
             try
             {
                 await _userService.RegisterUserAsync(request);
-                return Ok("Usuário cadastrado com sucesso.");
+            return Ok(new { message = "Usuário cadastrado com sucesso." });
+
             }
             catch (Exception ex)
             {
@@ -97,11 +116,13 @@ namespace Api.Controllers{
             try
             {
                 var token = await _userService.LoginAsync(loginRequest.Email, loginRequest.Password);
-                return Ok(token);
+                return Ok(new { token });
+
             }
             catch (UnauthorizedAccessException)
             {
-                return Unauthorized("Usuário ou senha inválidos.");
+                return Unauthorized(new { message = "Usuário ou senha inválidos." });
+
             }
         }
     }

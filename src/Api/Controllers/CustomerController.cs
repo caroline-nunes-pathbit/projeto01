@@ -1,21 +1,17 @@
-namespace src.Api.Controllers
-{
-    [Routes("api/customer")]
+using Microsoft.AspNetCore.Mvc;
+using Application.Services;
+using Domain.Entities;
+using Domain.Interfaces.Services;
 
-    public class CustomerController : ControllerBase<Customer>
+namespace Api.Controllers
+{
+    [Route("api/customer")]
+    public class CustomerController : BaseController<Customer>
     {
         private readonly ICustomerService _customerService;
-        public CustomerController(ICustomerService customerService)
+        public CustomerController(ICustomerService customerService) : base(customerService)
         {
             _customerService = customerService;
-        }
-
-        //Lista os clientes
-        [HttpGet]
-        public async Task<IActionResult> GetAllCustomers()
-        {
-            var customer = await _customerService.GetAllAsync();
-            return Ok(customer);
         }
 
         //Achar cliente por id
@@ -41,16 +37,16 @@ namespace src.Api.Controllers
                 return BadRequest("Dados inválidos.");
             } else
             {
-                await _customerService.AddAsync(customer);
-                return CreatedAction(nameof(GetCustomerById), new {id = customer.CustomerId}, customer);
+                await _customerService.CreateAsync(customer);
+                return CreatedAtAction(nameof(GetCustomerById), new {id = customer.Id}, customer);
             }
         }
 
         //Editar um cliente
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateCustomer(Guid id, [FromBody] CustomerController customer)
+        public async Task<IActionResult> UpdateCustomer(Guid id, [FromBody] Customer customer)
         {
-            if(id != customer.CustomerId)
+            if(id != customer.Id)
             {
                 return BadRequest("Dados inválidos.");
             } else
@@ -70,7 +66,7 @@ namespace src.Api.Controllers
                 return NotFound();
             } else 
             {
-                await _customerService.DeleteAsync(customer);
+                await _customerService.DeleteAsync(id);
                 return NoContent();
             }
         }

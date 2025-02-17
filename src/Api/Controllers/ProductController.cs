@@ -1,16 +1,22 @@
-namespace src.Api.Controllers
-{
-    [Routes("api/product")]
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Domain.Entities;
+using Domain.Interfaces.Services;
+using Application.DTOs;
 
-    public class ProductController : ControllerBase<Product>
+namespace Api.Controllers
+{
+    [Route("api/product")]
+    public class ProductController : BaseController<Product>
     {
         private readonly IProductService _productService;
-        public ProductController(IProductService _productService) 
+        
+        public ProductController(IProductService productService) : base(productService)
         {
             _productService = productService;
         }
 
-        //Lista os produtos
+        // Lista os produtos
         [HttpGet]
         public async Task<IActionResult> GetAllProducts()
         {
@@ -18,7 +24,7 @@ namespace src.Api.Controllers
             return Ok(product);
         }
 
-        //Achar produto por id
+        // Achar produto por id
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProductById(Guid id)
         {
@@ -26,13 +32,11 @@ namespace src.Api.Controllers
             if(product is null)
             {
                 return NotFound("Produto não foi encontrado.");
-            } else
-            {
-                return Ok(product);
             }
+            return Ok(product);
         }
 
-        //Criar um produto
+        // Criar um produto
         [Authorize(Roles = "Administrador")]
         [HttpPost]
         public async Task<IActionResult> CreateProduct([FromBody] ProductDTO productDto)
@@ -40,33 +44,33 @@ namespace src.Api.Controllers
             if(productDto.Quantity <= 0)
             {
                 return BadRequest("A quantidade do produto deve ser maior que zero.");
-            } else
-            {
-                var product = new Product(
-                    Name = productDto.ProductName,
-                    Price = productDto.Price,
-                    Quantity = productDto.Quantity
-                );
-                await _productService.AddAsync(product);
-                return CreatedAtAction(nameof(GetProductById), new {id = product.Id}, product);
             }
+            
+            var product = new Product
+            {
+                ProductName = productDto.Name,
+                Price = productDto.Price,
+                QuantityAvaliable = productDto.Quantity
+            };
+
+            await _productService.CreateAsync(product);
+            return CreatedAtAction(nameof(GetProductById), new {id = product.Id}, product);
         }
 
-        //Editar um cliente
+        // Editar um produto
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateProduct(Guid id, [FromBody] ProductController product)
+        public async Task<IActionResult> UpdateProduct(Guid id, [FromBody] Product product)
         {
-            if(id != product.ProductId)
+            if(id != product.Id)
             {
                 return BadRequest("Dados inválidos.");
-            } else
-            {
-                await _productService.UpdateAsync(product);
-                return NoContent();
             }
+            
+            await _productService.UpdateAsync(product);
+            return NoContent();
         }
 
-        //Apagar um cliente
+        // Apagar um produto
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(Guid id)
         {
@@ -74,11 +78,10 @@ namespace src.Api.Controllers
             if(product is null)
             {
                 return NotFound();
-            } else 
-            {
-                await _productService.DeleteAsync(product);
-                return NoContent();
             }
+            
+            await _productService.DeleteAsync(id);
+            return NoContent();
         }
     }
 }

@@ -1,22 +1,20 @@
+# Etapa de build
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /src
+WORKDIR /app
 
-COPY *.sln ./
-COPY src/Application/*.csproj src/Application/
-COPY src/Domain/*.csproj src/Domain/
-COPY src/Infrastructure/*.csproj src/Infrastructure/
-COPY src/gerenciador/*.csproj src/gerenciador/
-COPY tests/UnitTests/UnitTests.csproj tests/UnitTests/UnitTests.csproj
+COPY Projeto01.sln ./
+COPY src ./src
+COPY tests ./tests
+
 RUN dotnet restore
 
-COPY src/ ./src/
-COPY tests/ ./tests/
-RUN dotnet publish Projeto01.sln -c Release -o /out
+RUN dotnet publish src/Api -c Release -o /out --no-restore
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 COPY --from=build /out .
 
-EXPOSE 80
+EXPOSE 5000
+ENV ASPNETCORE_URLS "http://+:5000"
 
-ENTRYPOINT ["dotnet" "Projeto01.dll"]
+ENTRYPOINT ["dotnet", "Api.dll"]
