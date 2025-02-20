@@ -4,6 +4,7 @@ using Domain.Interfaces;
 using Infrastructure.Persistence;
 using System.Security.Cryptography;
 using System.Text;
+using Domain.Enums;
 
 namespace Infrastructure
 {
@@ -24,7 +25,8 @@ namespace Infrastructure
                     UserEmail = "admin@email.com",
                     UserName = "admin",
                     Password = ComputeSha256Hash("admin@123"),
-                    UserType = "Admin"
+                    UserType = UserType.Administrador,
+                    FullName = "Administrador do Sistema"
                 };
 
                 var cliente = new User
@@ -32,29 +34,12 @@ namespace Infrastructure
                     UserEmail = "cliente@email.com",
                     UserName = "cliente",
                     Password = ComputeSha256Hash("cliente@123"),
-                    UserType = "Cliente"
+                    UserType = UserType.Cliente,
+                    FullName = "Cliente Exemplo"
                 };
 
                 await userRepository.AddAsync(admin);
                 await userRepository.AddAsync(cliente);
-            }
-
-            if (!context.Customers.Any())
-            {
-                var customer1 = new Customer
-                {
-                    CustomerName = "Customer1",
-                    CustomerEmail = "customer1@gmail.com"
-                };
-
-                var customer2 = new Customer
-                {
-                    CustomerName = "Customer2",
-                    CustomerEmail = "customer2@gmail.com"
-                };
-
-                await customerRepository.AddAsync(customer1);
-                await customerRepository.AddAsync(customer2);
             }
 
             if (!context.Products.Any())
@@ -86,7 +71,8 @@ namespace Infrastructure
                         Cep = "12345-678",
                         Address = "Rua Exemplo, 123",
                         CustomerId = customer.First().Id,
-                        ProductId = product.First().Id
+                        ProductId = product.First().Id,
+                        OrderDate = DateTime.UtcNow // Convertendo para UTC
                     };
 
                     await orderRepository.AddAsync(order);

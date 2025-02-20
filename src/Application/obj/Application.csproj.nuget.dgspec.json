@@ -120,7 +120,11 @@
         "frameworks": {
           "net8.0": {
             "targetAlias": "net8.0",
-            "projectReferences": {}
+            "projectReferences": {
+              "C:\\Users\\carol\\Desktop\\Projeto01\\src\\Domain\\Domain.csproj": {
+                "projectPath": "C:\\Users\\carol\\Desktop\\Projeto01\\src\\Domain\\Domain.csproj"
+              }
+            }
           }
         },
         "warningProperties": {
@@ -178,11 +182,7 @@
         "frameworks": {
           "net8.0": {
             "targetAlias": "net8.0",
-            "projectReferences": {
-              "C:\\Users\\carol\\Desktop\\Projeto01\\src\\Common\\Common.csproj": {
-                "projectPath": "C:\\Users\\carol\\Desktop\\Projeto01\\src\\Common\\Common.csproj"
-              }
-            }
+            "projectReferences": {}
           }
         },
         "warningProperties": {

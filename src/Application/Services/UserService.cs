@@ -5,10 +5,9 @@ using System.Text;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.Extensions.Configuration;
 using Domain.Entities;
+using Domain.Enums;
 using Domain.Interfaces;
 using Domain.Interfaces.Services;
-using Common.DTOs;
-
 
 namespace Application.Services
 {
@@ -29,23 +28,28 @@ namespace Application.Services
             return await _userRepository.GetByUserNameAsync(name);
         }
         //Cadastrar
-        public async Task<User> SignupAsync(string email, string username, string password, string name, UserType userType)
+        public async Task SignupAsync(string username, string email, string password, string name, UserType userType)
         {
+            Console.WriteLine($"Tentando cadastrar usuário com email: {email}");
             var existingUser = await _userRepository.GetByEmailAsync(email);
-            if(existingUser is not null)
+            if (existingUser != null)
             {
                 throw new Exception("Email já cadastrado.");
             }
-            var hashPassword = Password(password);
+        
+            var hashPassword = ComputeSha256Hash(password);
+            
             var user = new User
             {
                 UserEmail = email,
                 UserName = username,
                 Password = hashPassword,
-                UserType = userType.ToString()
+                UserType = userType
             };
+
             await _userRepository.AddAsync(user);
-            if(userType == UserType.Cliente)
+
+            if (userType == UserType.Cliente)
             {
                 var customer = new Customer
                 {
@@ -54,8 +58,9 @@ namespace Application.Services
                 };
                 await _customerRepository.AddAsync(customer);
             }
-            return user;
         }
+
+
         //Fazer Login
         public async Task<string> LoginAsync(string email, string password)
         {
@@ -72,44 +77,7 @@ namespace Application.Services
             var token = GenerateJwtToken(user);
             return token;
         }
-
-        public async Task RegisterUserAsync(SignUpRequest request)
-        {
-            var existingUser = await _userRepository.GetByEmailAsync(request.Email);
-            if(existingUser is not null)
-            {
-                throw new Exception("Email já cadastrado.");
-            }
-            
-            var user = new User
-            {
-                UserEmail = request.Email,
-                UserName = request.Username,
-                Password = Password(request.Password),
-                UserType = "Cliente"
-            };
-            
-            await _userRepository.AddAsync(user);
-            
-            var customer = new Customer
-            {
-                CustomerEmail = request.Email,
-                CustomerName = request.Name
-            };
-            
-            await _customerRepository.AddAsync(customer);
-        }
-
-        // Hash Password que retorna Base64
-        private string Password(string password)
-        {
-            using (SHA256 sha256 = SHA256.Create())
-            {
-                byte [] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-                return Convert.ToBase64String(hashBytes);
-            }
-        }
-        //Hash Password que retorna hexadecimal
+        // Hash Password que retorna hexadecimal
         private string ComputeSha256Hash(string password)
         {
             using (SHA256 sha256Hash = SHA256.Create())
@@ -118,6 +86,7 @@ namespace Application.Services
                 return BitConverter.ToString(bytes).Replace("-","").ToLower();
             }
         }
+
         //Gerar token JWT
         private string GenerateJwtToken(User user)
         {

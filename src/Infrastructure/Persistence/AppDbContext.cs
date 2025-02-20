@@ -19,6 +19,8 @@ public class AppDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
+        modelBuilder.ApplyConfiguration(new UserConfiguration());
+
         modelBuilder.Entity<Order>()
             .HasOne(o => o.Customer)
             .WithMany()

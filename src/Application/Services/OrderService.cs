@@ -3,6 +3,7 @@ using System.Transactions;
 using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Interfaces.Services;
+using Domain.Enums;
 
 namespace Application.Services
 {

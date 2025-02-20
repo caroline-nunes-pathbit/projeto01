@@ -757,6 +757,9 @@
       },
       "System.Threading.Channels/7.0.0": {},
       "Common/1.0.0": {
+        "dependencies": {
+          "Domain": "1.0.0"
+        },
         "runtime": {
           "Common.dll": {
             "assemblyVersion": "1.0.0",
@@ -765,9 +768,6 @@
         }
       },
       "Domain/1.0.0": {
-        "dependencies": {
-          "Common": "1.0.0"
-        },
         "runtime": {
           "Domain.dll": {
             "assemblyVersion": "1.0.0",

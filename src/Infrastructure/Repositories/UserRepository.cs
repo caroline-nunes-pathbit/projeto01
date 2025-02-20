@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Persistence;
+using Domain.Enums;
 
 namespace Infrastructure.Repositories
 {
@@ -10,6 +11,7 @@ namespace Infrastructure.Repositories
         public UserRepository(AppDbContext context) : base(context)
         {
         }
+
         //Método implementado para encontrar um usuário por nome
         public async Task<User> GetByUserNameAsync(string name)
         {
@@ -20,8 +22,9 @@ namespace Infrastructure.Repositories
             }
             return user;
         }
+
         //Implementação do método de Cadastrar
-        public async Task<User> SignupAsync(string userEmail, string username, string password, string userType, string fullName)
+        public async Task<User> SignupAsync(string userEmail, string username, string password, UserType userType, string fullName)
         {
             var user = new User
             {
@@ -35,11 +38,12 @@ namespace Infrastructure.Repositories
             await _context.SaveChangesAsync();
             return user;
         }
+
         //Método implementado para encontrar um cliente pelo email
         public async Task<User> GetByEmailAsync(string userEmail)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.UserEmail == userEmail);
-            if (user == null)
+            if (user is null)
             {
                 throw new Exception("Usuário não encontrado.");
             }

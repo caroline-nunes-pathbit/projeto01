@@ -1,20 +1,38 @@
 # Etapa de build
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /app
-
-COPY Projeto01.sln ./
-COPY src ./src
-COPY tests ./tests
-
+# Backend build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS backend-build
+WORKDIR /src
+COPY . .
 RUN dotnet restore
+RUN dotnet publish -c Release -o /app
 
-RUN dotnet publish src/Api -c Release -o /out --no-restore
+# Frontend build
+FROM node:18 AS frontend-build
+WORKDIR /app/frontend
+COPY ./frontend/package.json ./frontend/package-lock.json ./
+RUN npm install
+COPY frontend/ .
+RUN npm install -g style-loader css-loader
+RUN npm run build
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
+
+# Final image
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
+RUN apt-get update && apt-get install -y curl
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+RUN apt-get install -y nodejs
 WORKDIR /app
-COPY --from=build /out .
 
-EXPOSE 5000
-ENV ASPNETCORE_URLS "http://+:5000"
 
+# Copy backend
+COPY --from=backend-build /app .
+
+# Copy frontend
+WORKDIR /app/frontend
+COPY --from=frontend-build /app/frontend/dist ./dist
+COPY --from=frontend-build /app/frontend/package.json ./
+RUN npm install -g serve
+
+
+WORKDIR /app
 ENTRYPOINT ["dotnet", "Api.dll"]

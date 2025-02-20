@@ -7,7 +7,7 @@ namespace Api.Controllers
     [ApiController]
     public class BaseController<T> : ControllerBase where T : class
     {
-        private readonly IGenericService<T> _service;
+        protected readonly IGenericService<T> _service;
 
         public BaseController(IGenericService<T> service)
         {
@@ -34,12 +34,9 @@ namespace Api.Controllers
             return NotFound($"Id {id} não encontrado");
         }
 
-        /// <summary>
-        /// Resultado da inserção de um dado
-        /// </summary>
-
+        // Resultado da inserção de um dado
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] T entity)
+        public virtual async Task<IActionResult> Create([FromBody] T entity)
         {
             if (entity is null)
             {

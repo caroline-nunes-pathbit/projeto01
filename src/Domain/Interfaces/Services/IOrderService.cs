@@ -1,5 +1,5 @@
-//Interface que define a assinatura do método específico da entidade OrderService
 using Domain.Entities;
+using Domain.Enums;
 
 namespace Domain.Interfaces.Services
 {

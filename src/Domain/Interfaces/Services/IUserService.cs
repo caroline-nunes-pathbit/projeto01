@@ -1,12 +1,12 @@
 using Domain.Entities;
-using Common.DTOs;
+using Domain.Enums;
 
 namespace Domain.Interfaces.Services
 {
     public interface IUserService : IGenericService<User>
     {
         Task<User> GetByUserNameAsync(string name);
-        Task RegisterUserAsync(SignUpRequest request);
+        Task SignupAsync(string username, string email, string password, string name, UserType userType);
         Task<string> LoginAsync(string email, string password);
     }
 
