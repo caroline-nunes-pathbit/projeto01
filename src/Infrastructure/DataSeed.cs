@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Persistence;
@@ -10,36 +11,49 @@ namespace Infrastructure
 {
     public class DataSeed
     {
-        public static async Task SeedDataAsync(AppDbContext context,
+        private readonly ILogger<DataSeed> _logger;
+
+        public DataSeed(ILogger<DataSeed> logger)
+        {
+            _logger = logger;
+        }
+
+        public async Task SeedDataAsync(AppDbContext context,
             IUserRepository userRepository,
             IProductRepository productRepository,
             ICustomerRepository customerRepository,
             IOrderRepository orderRepository)
         {
+            _logger.LogInformation("Starting data seeding process.");
             await context.Database.MigrateAsync();
 
             if (!context.Users.Any())
             {
                 var admin = new User
                 {
-                    UserEmail = "admin@email.com",
+                    Name = "Administrador do Sistema",
                     UserName = "admin",
+                    UserEmail = "admin@email.com",
                     Password = ComputeSha256Hash("admin@123"),
                     UserType = UserType.Administrador,
-                    FullName = "Administrador do Sistema"
                 };
 
                 var cliente = new User
                 {
-                    UserEmail = "cliente@email.com",
+                    Name = "Cliente Exemplo",
                     UserName = "cliente",
+                    UserEmail = "cliente@email.com",
                     Password = ComputeSha256Hash("cliente@123"),
                     UserType = UserType.Cliente,
-                    FullName = "Cliente Exemplo"
                 };
 
                 await userRepository.AddAsync(admin);
                 await userRepository.AddAsync(cliente);
+                _logger.LogInformation("Users seeded successfully.");
+            }
+            else
+            {
+                _logger.LogWarning("Users already exist, skipping user seeding.");
             }
 
             if (!context.Products.Any())
@@ -55,9 +69,14 @@ namespace Infrastructure
                 {
                     await productRepository.AddAsync(product);
                 }
+                _logger.LogInformation("Products seeded successfully.");
+            }
+            else
+            {
+                _logger.LogWarning("Products already exist, skipping product seeding.");
             }
 
-            if (!context.Orders.Any())
+            if (!context.Orders.Any() && context.Users.Any(u => u.UserType == UserType.Cliente))
             {
                 var customer = await customerRepository.GetAllAsync();
                 var product = await productRepository.GetAllAsync();
@@ -76,8 +95,32 @@ namespace Infrastructure
                     };
 
                     await orderRepository.AddAsync(order);
+                    _logger.LogInformation("Orders seeded successfully.");
+                }
+                else
+                {
+                    _logger.LogWarning("No customers or products found to seed orders.");
                 }
             }
+
+            // Add logic to insert users with UserType.Cliente into the Customers table
+            var clientes = context.Users.Where(u => u.UserType == UserType.Cliente).ToList();
+            foreach (var cliente in clientes)
+            {
+                if (!await customerRepository.ExistsAsync(cliente.Id)) // Assuming ExistsAsync checks if a customer exists
+                {
+                    var customer = new Customer
+                    {
+                        CustomerName = cliente.Name,
+                        CustomerEmail = cliente.UserEmail,
+                        // Add other necessary fields
+                    };
+                    await customerRepository.AddAsync(customer);
+                    _logger.LogInformation($"Customer {cliente.Name} added.");
+                }
+            }
+
+            _logger.LogInformation("Data seeding process completed.");
         }
 
         private static string ComputeSha256Hash(string rawData)

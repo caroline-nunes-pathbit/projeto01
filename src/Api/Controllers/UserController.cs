@@ -1,10 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 using Domain.Entities;
-using Domain.Enums;
 using Domain.Interfaces.Services;
-using Application.DTOs;
 using Common.DTOs;
+using Application.DTOs;
 
 namespace Api.Controllers
 {
@@ -17,28 +15,31 @@ namespace Api.Controllers
             _userService = userService;
         }
 
-        // Cadastrar-se (método específico)
         [HttpPost("signup")]
-        public async Task<IActionResult> SignUp([FromBody] SignUpRequest request)
+        public async Task<IActionResult> SignUp([FromBody]SignUpRequest request)
         {
-            if(!Enum.TryParse<Domain.Enums.UserType>(request.UserType.ToString(), true, out var userType))
-            {
-                return BadRequest("Tipo de usuário inválido");
-            }
-            else
-            {
-                await _userService.SignupAsync(request.Username, request.Email, request.Password, request.Name, userType);
+            try {
+                if (!Enum.TryParse<Domain.Enums.UserType>(request.UserType, true, out var userType))
+                {
+                    return BadRequest("Tipo de usuário inválido. Valores aceitos: Cliente, Administrador");
+                }
+
+                await _userService.SignupAsync(request.Name, request.UserName, request.UserEmail, request.Password, userType);
                 return Ok(new { message = "Usuário cadastrado com sucesso." });
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"{ex.Message}");
+                return StatusCode(500, new { message = "Erro interno no servidor", error = ex.Message });
             }
         }
 
-        // Fazer Login (método específico)
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody]LoginRequest loginRequest)
         {
             try
             {
-                var token = await _userService.LoginAsync(loginRequest.Email, loginRequest.Password);
+                var token = await _userService.LoginAsync(loginRequest.UserEmail, loginRequest.Password);
                 return Ok(new { token });
             }
             catch (UnauthorizedAccessException)

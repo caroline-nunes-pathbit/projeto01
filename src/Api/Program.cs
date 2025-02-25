@@ -1,85 +1,74 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Domain.Interfaces;
-using Application.Services;
-using Infrastructure.Persistence;
 using Infrastructure.Repositories;
-using Microsoft.EntityFrameworkCore;
 using Domain.Interfaces.Services;
-using Infrastructure;
+using Domain.Interfaces;
+using Application.Services; // Ensure this namespace is included for UserService
+using Microsoft.EntityFrameworkCore; // Add this for DbContext
+using Infrastructure.Persistence; // Add this for AppDbContext
 
 var builder = WebApplication.CreateBuilder(args);
-var jwtSettings = builder.Configuration.GetSection("Jwt");
-var key = Encoding.UTF8.GetBytes(jwtSettings["Key"] ?? throw new ArgumentNullException("Jwt:Key", "A chave JWT não pode ser nula."));
 
-// Configura o JWT
-builder.Services
-    .AddAuthentication(options =>
-    {
-        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    })
-    .AddJwtBearer(options =>
-    {
-        options.SaveToken = true;
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = jwtSettings["Issuer"],
-            ValidAudience = jwtSettings["Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(key),
-        };
-    });
-
-// Configura o Entity Framework com PostgreSQL
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IProductRepository, ProductRepository>();
-builder.Services.AddScoped<IOrderRepository, OrderRepository>();
-builder.Services.AddAuthorization();
-
-// Configura os serviços
-builder.Services.AddScoped<ICustomerService, CustomerService>();
-builder.Services.AddScoped<IUserService, UserService>(); // Adicionando o UserService
-
-// Adiciona serviços da API
+// Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddScoped<IUserService, UserService>(); // Adding UserService
+builder.Services.AddScoped<IUserRepository, UserRepository>(); // Adding UserRepository
+builder.Services.AddScoped<ICustomerRepository, CustomerRepository>(); // Adding CustomerRepository
+
+
+// Register AppDbContext
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))); // Adjust the connection string as needed
+
+// Configure JWT authentication
+var jwtKey = builder.Configuration["Jwt:Key"];
+if (string.IsNullOrEmpty(jwtKey))
+{
+    throw new InvalidOperationException("JWT Key não configurado.");
+}
+var key = Encoding.UTF8.GetBytes(jwtKey);
+var issuer = builder.Configuration["Jwt:Issuer"];
+var audience = builder.Configuration["Jwt:Audience"];
+if (string.IsNullOrEmpty(issuer) || string.IsNullOrEmpty(audience))
+{
+    throw new InvalidOperationException("Issuer ou Audience não configurados.");
+}
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = issuer,
+        ValidAudience = audience,
+        IssuerSigningKey = new SymmetricSecurityKey(key)
+    };
+});
+
 var app = builder.Build();
 
-// Configura o HTTP request pipeline.
+// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    var dbContext = services.GetRequiredService<AppDbContext>();
-    var userRepository = services.GetRequiredService<IUserRepository>();
-    var productRepository = services.GetRequiredService<IProductRepository>();
-    var customerRepository = services.GetRequiredService<ICustomerRepository>();
-    var orderRepository = services.GetRequiredService<IOrderRepository>();
-    
-    await DataSeed.SeedDataAsync(dbContext, 
-        userRepository, 
-        productRepository, 
-        customerRepository, 
-        orderRepository);
-}
-
+app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+
 app.Run();

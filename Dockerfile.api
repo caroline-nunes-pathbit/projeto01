@@ -1,0 +1,21 @@
+# Build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS base
+
+WORKDIR /build
+
+COPY ./src .
+
+RUN dotnet restore
+
+RUN dotnet publish -c Release -o /build/publish
+
+# Final image
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+
+WORKDIR /app
+
+COPY --from=base /build/publish .
+
+EXPOSE 8080
+
+CMD ["dotnet", "Api.dll"]

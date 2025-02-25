@@ -6,5 +6,6 @@ namespace Domain.Interfaces
     public interface ICustomerRepository : IGenericRepository<Customer>
     {
         Task<Customer> GetByCustomerNameAsync(string name);
+        Task<bool> ExistsAsync(Guid id);
     }
 }

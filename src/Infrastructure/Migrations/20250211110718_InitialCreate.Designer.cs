@@ -110,7 +110,7 @@ namespace Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("FullName")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 

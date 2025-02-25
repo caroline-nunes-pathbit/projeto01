@@ -24,15 +24,15 @@ namespace Infrastructure.Repositories
         }
 
         //Implementação do método de Cadastrar
-        public async Task<User> SignupAsync(string userEmail, string username, string password, UserType userType, string fullName)
+        public async Task<User> SignupAsync(string name, string userName, string userEmail, string password, UserType userType)
         {
             var user = new User
             {
+                Name = name,
+                UserName = userName,
                 UserEmail = userEmail,
-                UserName = username,
                 Password = password,
                 UserType = userType,
-                FullName = fullName
             };
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
@@ -42,12 +42,7 @@ namespace Infrastructure.Repositories
         //Método implementado para encontrar um cliente pelo email
         public async Task<User> GetByEmailAsync(string userEmail)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserEmail == userEmail);
-            if (user is null)
-            {
-                throw new Exception("Usuário não encontrado.");
-            }
-            return user;
+            return await _context.Users.FirstOrDefaultAsync(u => u.UserEmail == userEmail);
         }
     }
 }

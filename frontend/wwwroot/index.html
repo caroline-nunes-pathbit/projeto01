@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/styles.css">
+    <title>Projeto</title>
+    <style>
+        .hidden { display: none; }
+        .error { color: #abbddf; }
+        .success { color: #eb95d5; }
+    </style>
+</head>
+<body>
+    <div id="loginContainer">
+        <h1>Login</h1>
+        <div id="errorMessage" class="error hidden"></div>
+        <div id="successMessage" class="success hidden"></div>
+        <form id="loginForm">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="userEmail" required autocomplete="email"><br>
+            <label for="password">Senha:</label>
+            <input type="password" id="passwordLogin" name="password" required autocomplete="current-password"><br>
+            <button type="submit">Entrar</button>
+        </form>
+        <p>Não tem uma conta? <a href="/signup" id="showRegister">Cadastre-se</a></p>
+    </div>
+
+    <div id="registerContainer" class="hidden">
+        <h1>Cadastro</h1>
+        <form id="registerForm">
+            <label for="name">Nome Completo:</label>
+            <input type="text" id="name" required autocomplete="name">
+            <label for="userName">Nome de Usuário:</label>
+            <input type="text" id="userName" required autocomplete="username">
+            <label for="userEmail">Email:</label>
+            <input type="email" id="userEmail" required autocomplete="email">
+            <label for="password">Senha:</label>
+            <input type="password" id="password" required autocomplete="new-password">
+            <label for="userType">Tipo de Usuário:</label>
+            <select id="userType" required>
+                <option value="Cliente">Cliente</option>
+                <option value="Administrador">Administrador</option>
+            </select>
+            <button type="submit">Cadastrar</button>
+        </form>
+        <p>Já tem uma conta? <a href="/" id="showLogin">Faça Login</a></p>
+    </div>
+
+    <div id="adminInterface" class="hidden">
+        <h1>Bem-vindo Administrador!</h1>
+        <button id="listProductsBtn" onclick="listProducts()">Listar Produtos</button>
+        <button id="logoutBtn" onclick="logout()">Sair</button>
+    </div>
+    
+    <div id="clientInterface" class="hidden">
+        <h1>Bem-vindo Cliente!</h1>
+        <button id="listOrdersBtn" onclick="listOrders()">Listar Pedidos</button>
+        <button id="logoutBtn" onclick="logout()">Sair</button>
+    </div>    
+
+    <script type="module">
+        import { userLogin, userRegister } from './js/auth.js'; // Importando as funções de auth.js
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const userEmail = document.getElementById('email').value; // Updated to use the correct parameter name
+
+            const password = document.getElementById('passwordLogin').value; // Updated to use the correct ID
+
+            try {
+                const user = await userLogin({ userEmail, password });
+
+                if (user.role === 'Administrador') {
+                    document.getElementById('adminInterface').classList.remove('hidden');
+                } else if (user.role === 'Cliente') {
+                    document.getElementById('clientInterface').classList.remove('hidden');
+                }
+                document.getElementById('loginContainer').classList.add('hidden');
+            } catch (error) {
+                console.error('Login failed:', error);
+                document.getElementById('errorMessage').classList.remove('hidden');
+                document.getElementById('errorMessage').textContent = 'Erro ao fazer login! Por favor, verifique suas credenciais.';
+            }
+        });
+
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const userName = document.getElementById('userName').value;
+            const userEmail = document.getElementById('userEmail').value;
+            const password = document.getElementById('passwordLogin').value; // Updated to use the correct ID
+
+            const userType = document.getElementById('userType').value;
+
+            try {
+                await userRegister({ name, userName, userEmail, password, userType });
+                document.getElementById('successMessage').classList.remove('hidden');
+                document.getElementById('successMessage').textContent = 'Cadastro realizado com sucesso!';
+            } catch (error) {
+                console.error('Cadastro falhou:', error);
+                document.getElementById('errorMessage').classList.remove('hidden');
+                document.getElementById('errorMessage').textContent = 'Erro ao cadastrar usuário!';
+            }
+        });
+        
+        function logout() {
+            document.getElementById('loginContainer').classList.remove('hidden');
+            document.getElementById('adminInterface').classList.add('hidden');
+            document.getElementById('clientInterface').classList.add('hidden');
+        }
+    </script>
+
+    <script type="module" src="js/admin.js"></script>
+    <script type="module" src="js/client.js"></script>
+    <script type="module" src="js/script.js"></script>
+</body>
+</html>

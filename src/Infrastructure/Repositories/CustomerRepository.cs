@@ -18,7 +18,11 @@ namespace Infrastructure.Repositories
             {
                 return customer;
             }
-            
+        }
+
+        public async Task<bool> ExistsAsync(Guid id)
+        {
+            return await _context.Customers.AnyAsync(c => c.Id == id);
         }
     }
 }

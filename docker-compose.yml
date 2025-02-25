@@ -1,39 +1,77 @@
+name: projeto01
 services:
+#Infrasructure
   db:
     image: postgres:latest
+    container_name: db
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: carol@5432
       POSTGRES_DB: projeto01
     ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - "5433:5433"
+    networks:
+      - projeto01-net
 
+#Development
+  api-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: api-dev
+    tty: true
+    stdin_open: true
+    command: ["tail", "-f", "/dev/null"]
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    volumes:
+      - .src/:/src
+    networks:
+      - projeto01-net
+
+  web-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.web.dev
+    container_name: web-dev
+    ports:
+      - "3000:3000"
+    tty: true
+    stdin_open: true
+    command: ["tail", "-f", "/dev/null"]
+    depends_on:
+      - api-dev
+    volumes:
+     - ./frontend:/frontend
+    networks:
+      - projeto01-net
+
+#Production
   api:
     build:
       context: .
-      dockerfile: Dockerfile.projeto01
-    ports:
-      - "5000:80"
+      dockerfile: Dockerfile.api
+    container_name: api
+    ports: 
+      - 8080:8080
     depends_on:
-      - db
-    environment:
-      ASPNETCORE_ENVIRONMENT: Development
-      ConnectionStrings__DefaultConnection: "Host=db;Port=5432;Database=projeto01;Username=postgres;Password=postgres"
-      ASPNETCORE_URLS: http://+:80
+     - db
+    networks:
+      - projeto01-net
 
-  frontend:
+  web:
     build:
       context: .
-      dockerfile: Dockerfile.projeto01
-    ports:
-      - "3000:3000"
-    command: serve -s /app/frontend/dist -l 3000
+      dockerfile: Dockerfile.web
+    container_name: web
+    ports: 
+      - 9090:8080
     depends_on:
-      - api
-    environment:
-      REACT_APP_API_URL: "http://api:5000"
-
-volumes:
-  postgres_data:
+     - api
+    networks:
+      - projeto01-net
+networks:
+  projeto01-net:
+    driver: bridge
