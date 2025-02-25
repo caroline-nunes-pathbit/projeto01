@@ -1,0 +1,77 @@
+name: projeto01
+services:
+#Infrasructure
+  db:
+    image: postgres:latest
+    container_name: db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: carol@5432
+      POSTGRES_DB: projeto01
+    ports:
+      - "5433:5433"
+    networks:
+      - projeto01-net
+
+#Development
+  api-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: api-dev
+    tty: true
+    stdin_open: true
+    command: ["tail", "-f", "/dev/null"]
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    volumes:
+      - .src/:/src
+    networks:
+      - projeto01-net
+
+  web-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.web.dev
+    container_name: web-dev
+    ports:
+      - "3000:3000"
+    tty: true
+    stdin_open: true
+    command: ["tail", "-f", "/dev/null"]
+    depends_on:
+      - api-dev
+    volumes:
+     - ./frontend:/frontend
+    networks:
+      - projeto01-net
+
+#Production
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: api
+    ports: 
+      - 8080:8080
+    depends_on:
+     - db
+    networks:
+      - projeto01-net
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    container_name: web
+    ports: 
+      - 9090:8080
+    depends_on:
+     - api
+    networks:
+      - projeto01-net
+networks:
+  projeto01-net:
+    driver: bridge

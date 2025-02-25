@@ -1,0 +1,124 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    font-size: 16px;
+    color: white;
+}
+
+#loginContainer {
+    padding: 30px;
+    margin: 3% 30% 10% 30%;
+    border-radius: 14px;
+    background-color: #1c2028;
+    color: white;
+}
+
+#registerContainer {
+    padding: 30px;
+    margin: 3% 30% 10% 30%;
+    border-radius: 14px;
+    background-color: #1c2028;
+    color: white;
+}
+
+#loginForm label {
+    margin: 2%, 0, 0, 0; /* Updated margin to 2% on all sides */
+    width: 100%;
+    text-align: left;
+    color: #f4f4f4;
+}
+
+#registerForm label {
+    margin: 2%, 0, 0, 0; /* Updated margin to 2% on all sides */
+    width: 100%;
+    text-align: left;
+    color: #f4f4f4;
+}
+
+#loginForm input {
+    margin: 2% 0 0 0;
+    width: 90%;
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 9px;
+    border: 2px solid #d2c3b5;
+    display: block;
+}
+
+#registerForm input {
+    margin: 2% 0 0 0;
+    width: 90%;
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 9px;
+    border: 2px solid #d2c3b5;
+    display: block;
+}
+
+.container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+h1 {
+    color: #abbddf;
+    text-align: center;
+}
+
+.api-actions {
+    margin-top: 20px;
+    text-align: center;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #f0d0b2;
+    color: black;
+    border: none;
+    border-radius: 9px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #d6b18e;
+}
+
+#showRegister {
+    color: #eb95d5;
+}
+
+#showRegister:hover {
+    text-decoration: underline;
+}
+
+#showLogin {
+    color: #eb95d5;
+}
+
+#showLogin:hover {
+    text-decoration: underline;
+}
+
+select{
+    margin: 2% 0 0 0;
+    width: 90%;
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 9px;
+    border: 2px solid #d2c3b5;
+    display: block;
+}
+
+#responseContainer {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+}
