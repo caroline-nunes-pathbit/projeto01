@@ -103,17 +103,15 @@ namespace Infrastructure
                 }
             }
 
-            // Add logic to insert users with UserType.Cliente into the Customers table
             var clientes = context.Users.Where(u => u.UserType == UserType.Cliente).ToList();
             foreach (var cliente in clientes)
             {
-                if (!await customerRepository.ExistsAsync(cliente.Id)) // Assuming ExistsAsync checks if a customer exists
+                if (!await customerRepository.ExistsAsync(cliente.Id))
                 {
                     var customer = new Customer
                     {
                         CustomerName = cliente.Name,
                         CustomerEmail = cliente.UserEmail,
-                        // Add other necessary fields
                     };
                     await customerRepository.AddAsync(customer);
                     _logger.LogInformation($"Customer {cliente.Name} added.");

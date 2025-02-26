@@ -1,91 +1,89 @@
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Configuration; // Add this for IConfiguration
-using Domain.Interfaces.Services; // Add this for IUserService
-using Domain.Interfaces; // Add this for ICustomerRepository
-using Domain.Entities; // Add this for User
-using Domain.Enums; // Add this for UserType
+using Microsoft.Extensions.Configuration;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Application.Services;
+using Domain.Interfaces.Services;
+using Domain.Interfaces;
+using Domain.Entities;
+using Domain.Enums;
+using Microsoft.IdentityModel.Tokens;
 
-public class UserService : IUserService
+public class UserService : GenericService<User>, IUserService
 {
-    private readonly ICustomerRepository _customerRepository;
+    private readonly IUserRepository _userRepository;
     private readonly ILogger<UserService> _logger;
-    private readonly string jwtKey; // Declare jwtKey
+    private readonly IConfiguration _configuration;
+    private readonly string _jwtKey;
 
-    public UserService(ICustomerRepository customerRepository, ILogger<UserService> logger, IConfiguration configuration)
+    public UserService(IUserRepository userRepository, ILogger<UserService> logger, IConfiguration configuration) : base(userRepository)
     {
-        _customerRepository = customerRepository;
+        _userRepository = userRepository;
+        _configuration = configuration;
         _logger = logger;
-        jwtKey = configuration["Jwt:Key"]; // Retrieve jwtKey from configuration
+        _jwtKey = configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT Key não configurado.");
     }
 
     public async Task<string> LoginAsync(string userEmail, string password)
     {
-        // Log the login attempt
-        _logger.LogInformation("Login attempt for user: {UserEmail}", userEmail);
+        _logger.LogInformation("Tentando fazer login com o usuário: {UserEmail}", userEmail);
 
-        // Your existing login logic...
-
-        // If JWT Key is not configured, log an error
-        if (string.IsNullOrEmpty(jwtKey))
+        var user = await _userRepository.GetByEmailAsync(userEmail);
+        if(user is null || user.Password != password)
         {
-            _logger.LogError("JWT Key não configurado.");
-            throw new InvalidOperationException("JWT Key não configurado.");
+            _logger.LogWarning("Usuário não encontrado: {UserEmail}", userEmail);
+            throw new UnauthorizedAccessException("Usuário ou senha invalidos.");
         }
 
-        // Return a token or appropriate response
-        return await Task.FromResult("token"); // Placeholder return
+        return GenerateJwtToken(user);
     }
 
+    public async Task SignupAsync(string name, string userName, string userEmail, string password, UserType userType)
+    {
+        var existingUser = await _userRepository.GetByEmailAsync(userEmail);
+        if(existingUser is not null)
+        {
+            throw new InvalidOperationException("Email já cadastrado");
+        }
+
+        var user = new User
+        {
+            Name = name,
+            UserName = userName,
+            UserEmail = userEmail,
+            Password = password,
+            UserType = userType,
+        };
+
+        await _userRepository.AddAsync(user);
+    }
+    
+    public async Task<User> GetByUserNameAsync(string name)
+    {
+        return await _userRepository.GetByUserNameAsync(name);
+    }
+    
     public string GenerateJwtToken(User user)
     {
-        // Log token generation
-        _logger.LogInformation("Generating JWT token for user: {UserId}", user.Id);
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var key = Encoding.UTF8.GetBytes(_jwtKey);
 
-        // Your existing token generation logic...
-        return "generated_token"; // Placeholder return
-    }
-
-    // Implementing IUserService methods
-    public Task<User> GetByUserNameAsync(string name)
-    {
-        // Implementation here
-        throw new NotImplementedException();
-    }
-
-    public Task SignupAsync(string name, string userName, string userEmail, string password, UserType userType)
-    {
-        // Implementation here
-        throw new NotImplementedException();
-    }
-
-    // Implementing IGenericService<User> methods
-    public Task<User> GetByIdAsync(Guid id)
-    {
-        // Implementation here
-        throw new NotImplementedException();
-    }
-
-    public Task<IEnumerable<User>> GetAllAsync()
-    {
-        // Implementation here
-        throw new NotImplementedException();
-    }
-
-    public Task CreateAsync(User entity)
-    {
-        // Implementation here
-        throw new NotImplementedException();
-    }
-
-    public Task UpdateAsync(User entity)
-    {
-        // Implementation here
-        throw new NotImplementedException();
-    }
-
-    public Task DeleteAsync(Guid id)
-    {
-        // Implementation here
-        throw new NotImplementedException();
+        var tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(new Claim[]
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.Email, user.UserEmail),
+                new Claim("UserType", user.UserType.ToString()),
+            }),
+            Expires = DateTime.UtcNow.AddMinutes(60),
+            Issuer = _configuration["Jwt:Issuer"],
+            Audience = _configuration["Jwt:Audience"],
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature   )
+        };
+        
+        var token = tokenHandler.CreateToken(tokenDescriptor);
+        return tokenHandler.WriteToken(token);
     }
 }

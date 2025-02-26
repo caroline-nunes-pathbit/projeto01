@@ -5,11 +5,11 @@ services:
     image: postgres:latest
     container_name: db
     environment:
-      POSTGRES_USER: postgres
+      POSTGRES_USER: carolineluiza
       POSTGRES_PASSWORD: carol@5432
       POSTGRES_DB: projeto01
     ports:
-      - "5433:5433"
+      - "5432:5432"
     networks:
       - projeto01-net
 
@@ -17,7 +17,7 @@ services:
   api-dev:
     build:
       context: .
-      dockerfile: Dockerfile.api
+      dockerfile: Dockerfile.api.dev
     container_name: api-dev
     tty: true
     stdin_open: true
@@ -27,7 +27,7 @@ services:
     depends_on:
       - db
     volumes:
-      - .src/:/src
+      - ./src:/api
     networks:
       - projeto01-net
 
@@ -44,7 +44,7 @@ services:
     depends_on:
       - api-dev
     volumes:
-     - ./frontend:/frontend
+     - ./frontend:/web
     networks:
       - projeto01-net
 
@@ -54,6 +54,9 @@ services:
       context: .
       dockerfile: Dockerfile.api
     container_name: api
+    image: mcr.microsoft.com/dotnet/aspnet:8.0
+    environment:
+      - JWT_KEY=ewgfgy376f3
     ports: 
       - 8080:8080
     depends_on:
@@ -66,12 +69,14 @@ services:
       context: .
       dockerfile: Dockerfile.web
     container_name: web
+    image: mcr.microsoft.com/dotnet/aspnet:8.0
     ports: 
       - 9090:8080
     depends_on:
      - api
     networks:
       - projeto01-net
+
 networks:
   projeto01-net:
     driver: bridge

@@ -1,10 +1,14 @@
-FROM mcr.microsoft.com/dotnet/sdk:8.0
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS base
 
 WORKDIR /build
+
+RUN ls -R /build
 
 COPY /frontend .
 
 RUN dotnet restore
+
+RUN ls -R /build
 
 RUN dotnet publish -c Release -o /build/publish
 

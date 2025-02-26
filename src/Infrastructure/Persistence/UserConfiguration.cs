@@ -9,8 +9,8 @@ namespace Infrastructure.Persistence
         public void Configure(EntityTypeBuilder<User> builder)
         {
             builder.Property(u => u.UserType)
-                .HasConversion<string>()  // Garante que o ENUM será salvo como texto
-                .HasColumnType("text");   // Define o tipo da coluna no PostgreSQL
+                .HasConversion<string>()
+                .HasColumnType("text");
         }
     }
 }

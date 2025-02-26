@@ -22,6 +22,17 @@ namespace Infrastructure.Repositories
             }
             return user;
         }
+        
+        //Método implementado para encontrar um cliente pelo email
+        public async Task<User> GetByEmailAsync(string userEmail)
+        {
+            var email = await _context.Users.FirstOrDefaultAsync(u => u.UserEmail == userEmail);
+            if (email == null)
+            {
+                throw new Exception("Email não encontrado.");
+            }
+            return email;
+        }
 
         //Implementação do método de Cadastrar
         public async Task<User> SignupAsync(string name, string userName, string userEmail, string password, UserType userType)
@@ -34,15 +45,10 @@ namespace Infrastructure.Repositories
                 Password = password,
                 UserType = userType,
             };
+            
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
             return user;
-        }
-
-        //Método implementado para encontrar um cliente pelo email
-        public async Task<User> GetByEmailAsync(string userEmail)
-        {
-            return await _context.Users.FirstOrDefaultAsync(u => u.UserEmail == userEmail);
         }
     }
 }

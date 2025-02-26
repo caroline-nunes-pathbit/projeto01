@@ -15,21 +15,38 @@ namespace Api.Controllers
             _userService = userService;
         }
 
+        [HttpGet("{username}")]
+        public async Task<IActionResult> GetByUsername(string username)
+        {
+            try
+            {
+                var user = await _userService.GetByUserNameAsync(username);
+                return Ok(user);
+            }
+            catch
+            {
+                return NotFound(new { message = "Usuário não encontrado." });
+            }
+        }
+
         [HttpPost("signup")]
         public async Task<IActionResult> SignUp([FromBody]SignUpRequest request)
         {
-            try {
-                if (!Enum.TryParse<Domain.Enums.UserType>(request.UserType, true, out var userType))
-                {
-                    return BadRequest("Tipo de usuário inválido. Valores aceitos: Cliente, Administrador");
-                }
+            if (!Enum.TryParse<Domain.Enums.UserType>(request.UserType, true, out var userType))
+            {
+                return BadRequest(new { message = "Tipo de usuário inválido. Valores aceitos: Cliente, Administrador" });
+            }
 
+            try{
                 await _userService.SignupAsync(request.Name, request.UserName, request.UserEmail, request.Password, userType);
                 return Ok(new { message = "Usuário cadastrado com sucesso." });
             }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
             catch (Exception ex)
             {
-                Console.Error.WriteLine($"{ex.Message}");
                 return StatusCode(500, new { message = "Erro interno no servidor", error = ex.Message });
             }
         }

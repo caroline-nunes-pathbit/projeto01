@@ -4,9 +4,8 @@ using System.Text;
 using Infrastructure.Repositories;
 using Domain.Interfaces.Services;
 using Domain.Interfaces;
-using Application.Services; // Ensure this namespace is included for UserService
-using Microsoft.EntityFrameworkCore; // Add this for DbContext
-using Infrastructure.Persistence; // Add this for AppDbContext
+using Microsoft.EntityFrameworkCore;
+using Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,14 +14,14 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<IUserService, UserService>(); // Adding UserService
-builder.Services.AddScoped<IUserRepository, UserRepository>(); // Adding UserRepository
-builder.Services.AddScoped<ICustomerRepository, CustomerRepository>(); // Adding CustomerRepository
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 
 
 // Register AppDbContext
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))); // Adjust the connection string as needed
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Configure JWT authentication
 var jwtKey = builder.Configuration["Jwt:Key"];
@@ -64,6 +63,12 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+}
+
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    dbContext.Database.Migrate();
 }
 
 app.UseHttpsRedirection();

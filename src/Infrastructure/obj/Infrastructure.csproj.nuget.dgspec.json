@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\carol\\Desktop\\Projeto01\\src\\Infrastructure\\Infrastructure.csproj": {}
+    "/api/Infrastructure/Infrastructure.csproj": {}
   },
   "projects": {
-    "C:\\Users\\carol\\Desktop\\Projeto01\\src\\Application\\Application.csproj": {
+    "/api/Application/Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\carol\\Desktop\\Projeto01\\src\\Application\\Application.csproj",
+        "projectUniqueName": "/api/Application/Application.csproj",
         "projectName": "Application",
-        "projectPath": "C:\\Users\\carol\\Desktop\\Projeto01\\src\\Application\\Application.csproj",
-        "packagesPath": "C:\\Users\\carol\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\carol\\Desktop\\Projeto01\\src\\Application\\obj\\",
+        "projectPath": "/api/Application/Application.csproj",
+        "packagesPath": "/root/.nuget/packages/",
+        "outputPath": "/api/Application/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\carol\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "/root/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
@@ -26,11 +26,11 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\carol\\Desktop\\Projeto01\\src\\Common\\Common.csproj": {
-                "projectPath": "C:\\Users\\carol\\Desktop\\Projeto01\\src\\Common\\Common.csproj"
+              "/api/Common/Common.csproj": {
+                "projectPath": "/api/Common/Common.csproj"
               },
-              "C:\\Users\\carol\\Desktop\\Projeto01\\src\\Domain\\Domain.csproj": {
-                "projectPath": "C:\\Users\\carol\\Desktop\\Projeto01\\src\\Domain\\Domain.csproj"
+              "/api/Domain/Domain.csproj": {
+                "projectPath": "/api/Domain/Domain.csproj"
               }
             }
           }
@@ -56,19 +56,17 @@
             },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
-              "version": "[9.0.1, )"
+              "version": "[9.0.2, )"
             },
             "Microsoft.EntityFrameworkCore.Design": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
-              "suppressParent": "All",
               "target": "Package",
-              "version": "[9.0.1, )"
+              "version": "[9.0.2, )"
             },
             "Microsoft.EntityFrameworkCore.Tools": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
-              "suppressParent": "All",
               "target": "Package",
-              "version": "[9.0.1, )"
+              "version": "[9.0.2, )"
             },
             "Npgsql.EntityFrameworkCore.PostgreSQL": {
               "target": "Package",
@@ -76,7 +74,7 @@
             },
             "System.IdentityModel.Tokens.Jwt": {
               "target": "Package",
-              "version": "[8.4.0, )"
+              "version": "[8.6.0, )"
             }
           },
           "imports": [
@@ -95,21 +93,21 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.405/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.406/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\carol\\Desktop\\Projeto01\\src\\Common\\Common.csproj": {
+    "/api/Common/Common.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\carol\\Desktop\\Projeto01\\src\\Common\\Common.csproj",
+        "projectUniqueName": "/api/Common/Common.csproj",
         "projectName": "Common",
-        "projectPath": "C:\\Users\\carol\\Desktop\\Projeto01\\src\\Common\\Common.csproj",
-        "packagesPath": "C:\\Users\\carol\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\carol\\Desktop\\Projeto01\\src\\Common\\obj\\",
+        "projectPath": "/api/Common/Common.csproj",
+        "packagesPath": "/root/.nuget/packages/",
+        "outputPath": "/api/Common/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\carol\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "/root/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
@@ -121,8 +119,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\carol\\Desktop\\Projeto01\\src\\Domain\\Domain.csproj": {
-                "projectPath": "C:\\Users\\carol\\Desktop\\Projeto01\\src\\Domain\\Domain.csproj"
+              "/api/Domain/Domain.csproj": {
+                "projectPath": "/api/Domain/Domain.csproj"
               }
             }
           }
@@ -157,21 +155,21 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.405/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.406/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\carol\\Desktop\\Projeto01\\src\\Domain\\Domain.csproj": {
+    "/api/Domain/Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\carol\\Desktop\\Projeto01\\src\\Domain\\Domain.csproj",
+        "projectUniqueName": "/api/Domain/Domain.csproj",
         "projectName": "Domain",
-        "projectPath": "C:\\Users\\carol\\Desktop\\Projeto01\\src\\Domain\\Domain.csproj",
-        "packagesPath": "C:\\Users\\carol\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\carol\\Desktop\\Projeto01\\src\\Domain\\obj\\",
+        "projectPath": "/api/Domain/Domain.csproj",
+        "packagesPath": "/root/.nuget/packages/",
+        "outputPath": "/api/Domain/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\carol\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "/root/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
@@ -215,21 +213,21 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.405/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.406/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\carol\\Desktop\\Projeto01\\src\\Infrastructure\\Infrastructure.csproj": {
+    "/api/Infrastructure/Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\carol\\Desktop\\Projeto01\\src\\Infrastructure\\Infrastructure.csproj",
+        "projectUniqueName": "/api/Infrastructure/Infrastructure.csproj",
         "projectName": "Infrastructure",
-        "projectPath": "C:\\Users\\carol\\Desktop\\Projeto01\\src\\Infrastructure\\Infrastructure.csproj",
-        "packagesPath": "C:\\Users\\carol\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\carol\\Desktop\\Projeto01\\src\\Infrastructure\\obj\\",
+        "projectPath": "/api/Infrastructure/Infrastructure.csproj",
+        "packagesPath": "/root/.nuget/packages/",
+        "outputPath": "/api/Infrastructure/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\carol\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "/root/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
@@ -241,11 +239,11 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\carol\\Desktop\\Projeto01\\src\\Application\\Application.csproj": {
-                "projectPath": "C:\\Users\\carol\\Desktop\\Projeto01\\src\\Application\\Application.csproj"
+              "/api/Application/Application.csproj": {
+                "projectPath": "/api/Application/Application.csproj"
               },
-              "C:\\Users\\carol\\Desktop\\Projeto01\\src\\Domain\\Domain.csproj": {
-                "projectPath": "C:\\Users\\carol\\Desktop\\Projeto01\\src\\Domain\\Domain.csproj"
+              "/api/Domain/Domain.csproj": {
+                "projectPath": "/api/Domain/Domain.csproj"
               }
             }
           }
@@ -267,19 +265,19 @@
           "dependencies": {
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
-              "version": "[9.0.1, )"
+              "version": "[9.0.2, )"
             },
             "Microsoft.EntityFrameworkCore.Design": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",
               "target": "Package",
-              "version": "[9.0.1, )"
+              "version": "[9.0.2, )"
             },
             "Microsoft.EntityFrameworkCore.Tools": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",
               "target": "Package",
-              "version": "[9.0.1, )"
+              "version": "[9.0.2, )"
             },
             "Microsoft.Extensions.Configuration": {
               "target": "Package",
@@ -314,7 +312,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.405/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.406/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

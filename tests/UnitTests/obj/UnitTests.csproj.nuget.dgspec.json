@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\carol\\Desktop\\Projeto01\\tests\\UnitTests\\UnitTests.csproj": {}
+    "/workspaces/projeto01/tests/UnitTests/UnitTests.csproj": {}
   },
   "projects": {
-    "C:\\Users\\carol\\Desktop\\Projeto01\\tests\\UnitTests\\UnitTests.csproj": {
+    "/workspaces/projeto01/tests/UnitTests/UnitTests.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\carol\\Desktop\\Projeto01\\tests\\UnitTests\\UnitTests.csproj",
+        "projectUniqueName": "/workspaces/projeto01/tests/UnitTests/UnitTests.csproj",
         "projectName": "UnitTests",
-        "projectPath": "C:\\Users\\carol\\Desktop\\Projeto01\\tests\\UnitTests\\UnitTests.csproj",
-        "packagesPath": "C:\\Users\\carol\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\carol\\Desktop\\Projeto01\\tests\\UnitTests\\obj\\",
+        "projectPath": "/workspaces/projeto01/tests/UnitTests/UnitTests.csproj",
+        "packagesPath": "/home/codespace/.nuget/packages/",
+        "outputPath": "/workspaces/projeto01/tests/UnitTests/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\carol\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "/home/codespace/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
@@ -76,7 +76,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.405/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.404/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
