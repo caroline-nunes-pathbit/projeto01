@@ -1,7 +1,7 @@
 //Interface que define a assinatura do método específico da entidade ProductRepository
 using Domain.Entities;
 
-namespace Domain.Interfaces
+namespace Domain.Interfaces.Repositories
 {
     public interface IProductRepository : IGenericRepository<Product>
     {

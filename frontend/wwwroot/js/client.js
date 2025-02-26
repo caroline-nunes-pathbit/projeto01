@@ -1,3 +1,5 @@
+const URL_BASE = "http://0.0.0.0:5000"
+
 // Import the isAuthenticated function from auth.js
 import { isAuthenticated } from './auth.js';
 
@@ -64,7 +66,7 @@ if (form) {
 // Função para criar um pedido
 async function createOrder(orderData) {
     try {
-        const response = await fetch("http://localhost:5000/api/orders", {
+        const response = await fetch(`${URL_BASE}/api/orders`, {
             method: 'POST',
             headers: getAuthHeaders(),
             body: JSON.stringify(orderData),
@@ -82,7 +84,7 @@ async function createOrder(orderData) {
 // Função para listar todos os pedidos
 async function getOrders() {
     try {
-        const response = await fetch("http://localhost:5000/api/orders", {
+        const response = await fetch(`${URL_BASE}/api/orders`, {
             method: 'GET',
             headers: getAuthHeaders(),
         });
@@ -99,7 +101,7 @@ async function getOrders() {
 // Função para excluir um produto de um pedido
 async function deleteProductFromOrder(orderId, productId) {
     try {
-        const response = await fetch(`http://localhost:5000/api/orders`, {
+        const response = await fetch(`${URL_BASE}/api/orders`, {
             method: 'DELETE',
             headers: getAuthHeaders(),
         });
@@ -118,7 +120,7 @@ async function deleteProductFromOrder(orderId, productId) {
 // Função para carregar os produtos (opções de produto no formulário)
 async function getProducts() {
     try {
-        const response = await fetch("http://localhost:5000/api/products", {
+        const response = await fetch(`${URL_BASE}/api/products`, {
             method: 'GET',
             headers: getAuthHeaders(),
         });
@@ -140,7 +142,7 @@ function renderProductOptions(products) {
     products.forEach(product => {
         const option = document.createElement('option');
         option.value = product.id;
-        option.textContent = `${product.name} - R$ ${product.price}`;
+        option.textContent = `${product.name}, - R$ ${product.price}`;
         productSelect.appendChild(option);
     });
 }
@@ -159,8 +161,8 @@ function renderOrders(orders) {
         const orderDiv = document.createElement('div');
         orderDiv.classList.add('order');
 
-        orderDiv.innerHTML = `
-            <h3>Pedido #${order.id}</h3>
+        orderDiv.innerHTML = 
+            `<h3>Pedido #${order.id}</h3>
             <p>Nome: ${order.clientName}</p>
             <p>Produto: ${order.productName}</p>
             <p>Quantidade: ${order.quantity}</p>
@@ -168,8 +170,7 @@ function renderOrders(orders) {
             <p>CEP: ${order.cep}</p>
             <p>Status: ${order.status ? 'Enviado' : 'Não Enviado'}</p>
             <p>Data: ${new Date(order.createdAt).toLocaleString()}</p>
-            <button onclick="deleteProductFromOrder(${order.id}, ${order.productId})">Excluir Produto do Pedido</button>
-        `;
+            <button onclick="deleteProductFromOrder(${order.id}, ${order.productId})">Excluir Produto do Pedido</button>`;
 
         ordersList.appendChild(orderDiv);
     });

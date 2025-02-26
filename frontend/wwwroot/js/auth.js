@@ -1,4 +1,4 @@
-const URL_BASE = "http://localhost:5000";
+const URL_BASE = "http://0.0.0.0:5000";
 
 async function userRegister({ name, userName, userEmail, password, userType }) {
     console.log("📤 Tentando cadastrar usuário:", { name, userName, userEmail, password, userType });

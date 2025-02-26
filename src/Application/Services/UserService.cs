@@ -3,23 +3,26 @@ using Microsoft.Extensions.Configuration;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Application.Services;
 using Domain.Interfaces.Services;
-using Domain.Interfaces;
+using Domain.Interfaces.Repositories;
 using Domain.Entities;
 using Domain.Enums;
 using Microsoft.IdentityModel.Tokens;
 
-public class UserService : GenericService<User>, IUserService
+namespace Application.Services
 {
-    private readonly IUserRepository _userRepository;
-    private readonly ILogger<UserService> _logger;
-    private readonly IConfiguration _configuration;
-    private readonly string _jwtKey;
+    public class UserService : GenericService<User>, IUserService
+    {
+        private readonly IUserRepository _userRepository;
+        private readonly ICustomerService _customerService;
+        private readonly ILogger<UserService> _logger;
+        private readonly IConfiguration _configuration;
+        private readonly string _jwtKey;
 
-    public UserService(IUserRepository userRepository, ILogger<UserService> logger, IConfiguration configuration) : base(userRepository)
+    public UserService(IUserRepository userRepository, ICustomerService customerService, ILogger<UserService> logger, IConfiguration configuration) : base(userRepository)
     {
         _userRepository = userRepository;
+        _customerService = customerService;
         _configuration = configuration;
         _logger = logger;
         _jwtKey = configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT Key não configurado.");
@@ -57,6 +60,18 @@ public class UserService : GenericService<User>, IUserService
         };
 
         await _userRepository.AddAsync(user);
+
+        if (userType == UserType.Cliente)
+        {
+            var customer = new Customer
+            {
+                Id = user.Id,
+                CustomerName = user.Name,
+                CustomerEmail = user.UserEmail,
+            };
+
+            await _customerService.CreateAsync(customer);
+        }
     }
     
     public async Task<User> GetByUserNameAsync(string name)
@@ -85,5 +100,6 @@ public class UserService : GenericService<User>, IUserService
         
         var token = tokenHandler.CreateToken(tokenDescriptor);
         return tokenHandler.WriteToken(token);
+        }
     }
 }

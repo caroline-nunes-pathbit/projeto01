@@ -1,3 +1,5 @@
+const URL_BASE = "http://0.0.0.0:5000"
+
 // Verifica se o usuário é um administrador
 function isAdmin() {
     const userType = localStorage.getItem("userType");
@@ -11,7 +13,7 @@ async function loadProducts() {
         return;
     }
 
-    const response = await fetch("http://localhost:5000/api/products", {
+    const response = await fetch(`${URL_BASE}/api/products`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -55,7 +57,7 @@ function editProduct(event) {
 // Função para excluir produto
 async function deleteProduct(event) {
     const productId = event.target.dataset.id;
-    const response = await fetch(`http://localhost:5000/api/products/${productId}`, {
+    const response = await fetch(`${URL_BASE}/api/products/${productId}`, {
         method: "DELETE",
         headers: {
             "Content-Type": "application/json",

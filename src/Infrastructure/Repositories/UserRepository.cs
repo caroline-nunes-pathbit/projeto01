@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Domain.Entities;
-using Domain.Interfaces;
+using Domain.Interfaces.Repositories;
 using Infrastructure.Persistence;
 using Domain.Enums;
 
@@ -26,12 +26,7 @@ namespace Infrastructure.Repositories
         //Método implementado para encontrar um cliente pelo email
         public async Task<User> GetByEmailAsync(string userEmail)
         {
-            var email = await _context.Users.FirstOrDefaultAsync(u => u.UserEmail == userEmail);
-            if (email == null)
-            {
-                throw new Exception("Email não encontrado.");
-            }
-            return email;
+            return await _context.Users.FirstOrDefaultAsync(u => u.UserEmail == userEmail);
         }
 
         //Implementação do método de Cadastrar

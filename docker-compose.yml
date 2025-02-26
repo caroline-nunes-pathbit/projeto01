@@ -22,6 +22,8 @@ services:
     tty: true
     stdin_open: true
     command: ["tail", "-f", "/dev/null"]
+    environment:
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Username=carolineluiza;Password=carol@5432;Database=projeto01;
     ports:
       - "5000:5000"
     depends_on:

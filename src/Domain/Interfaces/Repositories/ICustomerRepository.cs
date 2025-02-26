@@ -1,7 +1,7 @@
 //Interface que define a assinatura do método específico da entidade CustomerRepository
 using Domain.Entities;
 
-namespace Domain.Interfaces
+namespace Domain.Interfaces.Repositories
 {
     public interface ICustomerRepository : IGenericRepository<Customer>
     {
