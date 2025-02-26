@@ -1,0 +1,36 @@
+# Build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS base
+
+WORKDIR /build
+
+RUN ls -R /build
+
+COPY ./Projeto01.sln .
+
+# Copia apenas os arquivos .csproj de todas as pastas para restaurar dependências
+COPY ./src/Api/ ./src/Api/
+COPY ./src/Domain/ ./src/Domain/
+COPY ./src/Common/ ./src/Common/
+COPY ./src/Infrastructure/ ./src/Infrastructure/
+COPY ./src/Application/ ./src/Application/
+COPY ./tests/UnitTests/ ./tests/UnitTests/
+
+RUN ls -R /build
+
+RUN dotnet restore Projeto01.sln
+
+COPY ./src ./src
+COPY ./tests ./tests
+
+RUN dotnet publish -c Release -o /build/publish
+
+# Final image
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+
+WORKDIR /app
+
+COPY --from=base /build/publish .
+
+EXPOSE 8080
+
+CMD ["dotnet", "Api.dll"]
